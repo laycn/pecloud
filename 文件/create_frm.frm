@@ -169,3 +169,12 @@ Sub create_data(ydhmc)
     rs.Update
     conn.Close
 End Sub
+
+Private Sub ydhopen_Click()
+    Dim conn As New DBcls
+    conn.ydhmc = ydh_list.Text
+    txtsql = "select * from MyTable"
+    conn.rs.Open txtsql, conn.OpenConn, 1, 1
+    MsgBox rs("ÐÕÃû")
+    
+End Sub

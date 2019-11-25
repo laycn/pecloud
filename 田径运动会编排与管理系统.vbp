@@ -5,6 +5,7 @@ Reference=*\G{00000600-0000-0010-8000-00AA006D2EA4}#2.8#0#C:\Program Files (x86)
 Form=Main.frm
 Form=нд╪Ч\create_frm.frm
 Module=db; db.bas
+Class=DBcls; DBcls.cls
 IconForm="Main"
 Startup="Main"
 HelpFile=""
