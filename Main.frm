@@ -28,15 +28,6 @@ Private Sub create_Click()
     create_frm.Show 1
 End Sub
 
-Private Sub Form_Load()
-    OpenConn
-    
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-    CloseConn
-End Sub
-
 Private Sub out_Click()
     End
 End Sub
