@@ -1,74 +1,76 @@
 VERSION 5.00
 Begin VB.Form create_frm 
    Caption         =   "新建运动会"
-   ClientHeight    =   5910
+   ClientHeight    =   5400
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   9195
+   ClientWidth     =   4305
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5910
-   ScaleWidth      =   9195
+   ScaleHeight     =   5400
+   ScaleWidth      =   4305
    StartUpPosition =   3  '窗口缺省
-   Begin VB.CommandButton ydhcreate 
-      Caption         =   "创建运动会"
-      Height          =   495
-      Left            =   3240
+   Begin VB.Frame Frame3 
+      Height          =   615
+      Left            =   120
       TabIndex        =   5
-      Top             =   5160
-      Width           =   1215
+      Top             =   4560
+      Width           =   3975
+      Begin VB.CommandButton ydhopen 
+         Caption         =   "打开"
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   7
+         Top             =   160
+         Width           =   975
+      End
+      Begin VB.CommandButton ydhdel 
+         Caption         =   "删除"
+         Height          =   375
+         Left            =   360
+         TabIndex        =   6
+         Top             =   160
+         Width           =   975
+      End
    End
-   Begin VB.TextBox txtydhmc 
-      Height          =   375
-      Left            =   120
-      MultiLine       =   -1  'True
-      TabIndex        =   4
-      Top             =   5280
-      Width           =   3015
-   End
-   Begin VB.CommandButton ydhopen 
-      Caption         =   "打开"
-      Height          =   495
-      Left            =   3240
-      TabIndex        =   3
-      Top             =   4080
-      Width           =   1215
-   End
-   Begin VB.CommandButton ydhdel 
-      Caption         =   "删除"
-      Height          =   495
-      Left            =   240
-      TabIndex        =   2
-      Top             =   4080
-      Width           =   1215
-   End
-   Begin VB.ListBox ydh_list 
-      Height          =   3120
-      ItemData        =   "create_frm.frx":0000
-      Left            =   0
-      List            =   "create_frm.frx":0002
-      TabIndex        =   0
-      Top             =   600
-      Width           =   4575
-   End
-   Begin VB.Label ydh_name 
+   Begin VB.Frame Frame2 
       Caption         =   "请选择运动会名称"
-      BeginProperty Font 
-         Name            =   "宋体"
-         Size            =   10.5
-         Charset         =   134
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H8000000D&
-      Height          =   255
+      Height          =   3615
       Left            =   120
-      TabIndex        =   1
-      Top             =   240
-      Width           =   2055
+      TabIndex        =   3
+      Top             =   960
+      Width           =   3975
+      Begin VB.ListBox ydh_list 
+         Height          =   3120
+         Left            =   120
+         TabIndex        =   4
+         Top             =   360
+         Width           =   3735
+      End
+   End
+   Begin VB.Frame Frame1 
+      Caption         =   "新建运动会"
+      Height          =   735
+      Left            =   120
+      TabIndex        =   0
+      Top             =   120
+      Width           =   3975
+      Begin VB.CommandButton ydhcreate 
+         Caption         =   "新建"
+         Height          =   375
+         Left            =   3120
+         TabIndex        =   2
+         Top             =   240
+         Width           =   735
+      End
+      Begin VB.TextBox txtydhmc 
+         Height          =   375
+         Left            =   120
+         TabIndex        =   1
+         Top             =   240
+         Width           =   2895
+      End
    End
 End
 Attribute VB_Name = "create_frm"
@@ -77,10 +79,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Form_Load()
-    ydh_refresh
+    'ydh_refresh
     'cn.Close
     'Main.out.Enabled = False
 End Sub
+
 Private Sub ydhcreate_Click()
     ydhmc = Trim(txtydhmc.Text)
     If ydhmc = "" Then
@@ -174,7 +177,7 @@ Private Sub ydhopen_Click()
     Dim conn As New DBcls
     conn.ydhmc = ydh_list.Text
     txtsql = "select * from MyTable"
-    conn.rs.Open txtsql, conn.OpenConn, 1, 1
+    conn.rs.Open txtsql, conn.openConn, 1, 1
     MsgBox rs("姓名")
     
 End Sub
