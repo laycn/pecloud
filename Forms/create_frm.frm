@@ -1,21 +1,21 @@
 VERSION 5.00
 Begin VB.Form create_frm 
    Caption         =   "新建运动会"
-   ClientHeight    =   5400
+   ClientHeight    =   4935
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   4305
+   ClientWidth     =   4185
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5400
-   ScaleWidth      =   4305
+   ScaleHeight     =   4935
+   ScaleWidth      =   4185
    StartUpPosition =   3  '窗口缺省
    Begin VB.Frame Frame3 
       Height          =   615
       Left            =   120
       TabIndex        =   5
-      Top             =   4560
+      Top             =   4200
       Width           =   3975
       Begin VB.CommandButton ydhopen 
          Caption         =   "打开"
@@ -36,22 +36,31 @@ Begin VB.Form create_frm
    End
    Begin VB.Frame Frame2 
       Caption         =   "请选择运动会名称"
-      Height          =   3615
+      Height          =   3375
       Left            =   120
       TabIndex        =   3
-      Top             =   960
+      Top             =   840
       Width           =   3975
       Begin VB.ListBox ydh_list 
-         Height          =   3120
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   3000
          Left            =   120
          TabIndex        =   4
-         Top             =   360
+         Top             =   240
          Width           =   3735
       End
    End
    Begin VB.Frame Frame1 
       Caption         =   "新建运动会"
-      Height          =   735
+      Height          =   700
       Left            =   120
       TabIndex        =   0
       Top             =   120
@@ -61,11 +70,20 @@ Begin VB.Form create_frm
          Height          =   375
          Left            =   3120
          TabIndex        =   2
-         Top             =   240
+         Top             =   200
          Width           =   735
       End
       Begin VB.TextBox txtydhmc 
-         Height          =   375
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   330
          Left            =   120
          TabIndex        =   1
          Top             =   240
@@ -181,11 +199,3 @@ Sub create_data(ydhmc)
     conn.Close
 End Sub
 
-Private Sub ydhopen_Click()
-    Dim conn As New DBcls
-    conn.ydhmc = ydh_list.Text
-    txtsql = "select * from MyTable"
-    conn.rs.Open txtsql, conn.openConn, 1, 1
-    MsgBox rs("姓名")
-    
-End Sub
