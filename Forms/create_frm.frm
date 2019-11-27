@@ -78,8 +78,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim DBtool As New DBcls
+Dim rs As ADODB.Recordset
+    
 Private Sub Form_Load()
-    'ydh_refresh
+    ydh_refresh
     'cn.Close
     'Main.out.Enabled = False
 End Sub
@@ -92,18 +95,24 @@ Private Sub ydhcreate_Click()
         txtydhmc.SetFocus
         Exit Sub
     End If
-    txtsql = "select * from ydh where is_open = true"
-    rs.Open txtsql, cn, 2, 3
-    rs.MoveFirst
-    Do While Not rs.EOF
-        rs.Fields("is_open") = False
-        rs.MoveNext
-    Loop
-    rs.AddNew
-    rs.Fields("ydh_name") = ydhmc
-    rs.Fields("is_open") = True
-    rs.Update
-    rs.Close
+    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
+    Dim res As Long
+    Dim txtsql As String
+    txtsql = "INSERT INTO ydh ([ydh_name],[is_open]) VALUES ('" & ydhmc & "',true)"
+    res = DBtool.ExecNonQuery(txtsql)
+    txtsql = "UPDATE ydh SET is_open = 0 WHERE ydh_name <> '" & ydhmc & "'"
+    res = DBtool.ExecNonQuery(txtsql)
+    
+    
+'    Do While Not rs.EOF
+'        rs.Fields("is_open") = False
+'        rs.MoveNext
+'    Loop
+'    rs.AddNew
+'    rs.Fields("ydh_name") = ydhmc
+'    rs.Fields("is_open") = True
+'    rs.Update
+'    rs.Close
     If Dir(App.Path & "\" & ydhmc) = "" Then
         MkDir (App.Path & "\" & ydhmc)
     End If
@@ -112,23 +121,22 @@ Private Sub ydhcreate_Click()
 End Sub
 Sub ydh_refresh()
     ydh_list.Clear
-    txtsql = "select * from ydh"
-    rs.Open txtsql, cn, 1, 1
-    If rs.RecordCount > 0 Then
-        Do While Not rs.EOF
-            n = n + 1
-            ydh_list.AddItem rs.Fields("ydh_name")
-            If rs.Fields("is_open") = True Then
-                ydh_list.Selected(n - 1) = True
-            End If
-            rs.MoveNext
-        Loop
-        
-    Else
-        ydh_list.AddItem "Ã»ÓÐ¼ÇÂ¼"
+    Dim n As Integer
+    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
+    Set rs = DBtool.ExecQuery("select * from ydh")
+    
+    If rs.RecordCount = 0 Then
+        DBtool.ReleaseRecordset rs
+        Exit Sub
     End If
-    rs.Close
-    'ydh_list.Selected(2) = True
+    Do While Not rs.EOF
+        n = n + 1
+        ydh_list.AddItem rs.Fields("ydh_name")
+        If rs.Fields("is_open") = True Then
+            ydh_list.Selected(n - 1) = True
+        End If
+        rs.MoveNext
+    Loop
 End Sub
 
 Private Sub ydhdel_Click()

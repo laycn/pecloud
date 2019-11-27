@@ -53,7 +53,6 @@ Private Sub Form_Load()
         'สอทลืสิด
         DBtool.ReleaseRecordset rs
     End If
-    MsgBox ydhmc
 End Sub
 
 Private Sub out_Click()
