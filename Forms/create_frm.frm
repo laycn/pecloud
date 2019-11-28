@@ -52,7 +52,9 @@ Begin VB.Form create_frm
             Strikethrough   =   0   'False
          EndProperty
          Height          =   3000
+         ItemData        =   "create_frm.frx":0000
          Left            =   120
+         List            =   "create_frm.frx":0002
          TabIndex        =   4
          Top             =   240
          Width           =   3735
@@ -96,8 +98,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Option Explicit
+
 Dim DBtool As New DBcls
-Dim rs As ADODB.Recordset
+'Dim Rs As ADODB.Recordset
     
 Private Sub Form_Load()
     ydh_refresh
@@ -106,58 +110,44 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub ydhcreate_Click()
-    ydhmc = Trim(txtydhmc.Text)
-    If ydhmc = "" Then
+    Dim txtmc As String
+    txtmc = Trim(txtydhmc.Text)
+    If txtmc = "" Then
         MsgBox "名称不能为空！"
         txtydhmc.Text = ""
         txtydhmc.SetFocus
         Exit Sub
     End If
-    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
-    Dim res As Long
-    Dim txtsql As String
-    txtsql = "INSERT INTO ydh ([ydh_name],[is_open]) VALUES ('" & ydhmc & "',true)"
-    res = DBtool.ExecNonQuery(txtsql)
-    txtsql = "UPDATE ydh SET is_open = 0 WHERE ydh_name <> '" & ydhmc & "'"
-    res = DBtool.ExecNonQuery(txtsql)
-    
-    
-'    Do While Not rs.EOF
-'        rs.Fields("is_open") = False
-'        rs.MoveNext
-'    Loop
-'    rs.AddNew
-'    rs.Fields("ydh_name") = ydhmc
-'    rs.Fields("is_open") = True
-'    rs.Update
-'    rs.Close
-    If Dir(App.Path & "\" & ydhmc) = "" Then
-        MkDir (App.Path & "\" & ydhmc)
+    res.MoveFirst
+    Do While Not res.EOF
+        res("is_open") = False
+        res.MoveNext
+    Loop
+    res.AddNew
+    res("ydh_name") = txtmc
+    res("is_open") = True
+    res.Update
+    If Dir(App.Path & "\" & txtmc) = "" Then
+        MkDir (App.Path & "\" & txtmc)
     End If
-    create_data ydhmc
+    create_data txtmc
     ydh_refresh
 End Sub
 Sub ydh_refresh()
     ydh_list.Clear
-    Dim n As Integer
-    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
-    Set rs = DBtool.ExecQuery("select * from ydh")
-    
-    If rs.RecordCount = 0 Then
-        DBtool.ReleaseRecordset rs
-        Exit Sub
-    End If
-    Do While Not rs.EOF
-        n = n + 1
-        ydh_list.AddItem rs.Fields("ydh_name")
-        If rs.Fields("is_open") = True Then
-            ydh_list.Selected(n - 1) = True
+    Dim i As Integer
+    res.MoveFirst
+    For i = 0 To res.RecordCount - 1
+        ydh_list.AddItem res("ydh_name")
+        If res("is_open") = True Then
+            ydh_list.Selected(i) = True
         End If
-        rs.MoveNext
-    Loop
+        res.MoveNext
+    Next i
 End Sub
 
 Private Sub ydhdel_Click()
+    Dim m As String
     m = MsgBox("您是否真的要删除这届运动会吗？", 17, "删除提示")
     If m = "vbyes" Then
         
@@ -199,3 +189,19 @@ Sub create_data(ydhmc)
     conn.Close
 End Sub
 
+Private Sub ydhopen_Click()
+    Dim rs As ADODB.Recordset
+    ydhmc = ydh_list.Text
+    Set rs = ExeSQL("select * from MyTable", ydhmc)
+    'MsgBox rs.RecordCount
+    
+    Main.Caption = "田径运动会编排与管理系统" & "  当前运动会：" & ydhmc
+    Unload Me
+    If res.RecordCount > 0 Then
+        res.MoveFirst
+        Do While Not res.EOF
+            res("is_open") = IIf(res("ydh_name") = ydhmc, True, False)
+            res.MoveNext
+        Loop
+    End If
+End Sub

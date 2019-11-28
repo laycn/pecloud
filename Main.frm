@@ -37,22 +37,33 @@ Private Sub create_Click()
 End Sub
 
 Private Sub Form_Load()
-    Dim DBtool As New DBcls
-    Dim rs As ADODB.Recordset
-    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
-    Set rs = DBtool.ExecQuery("select * from ydh")
-    If rs.RecordCount > 0 Then
-        Do While Not rs.EOF
-            If rs("is_open") = True Then
-                ydhmc = rs("ydh_name")
-                Me.Caption = "田径运动会编排与管理系统" & "  当前运动会：" & ydhmc
-            End If
-            rs.MoveNext
+'    Dim DBtool As New DBcls
+'    Dim Rs As ADODB.Recordset
+'    DBtool.SetConnToFile App.Path & "\bpdata.mdb"
+'    Set Rs = DBtool.ExecQuery("select * from ydh")
+'    If Rs.RecordCount > 0 Then
+'        Do While Not Rs.EOF
+'            If Rs("is_open") = True Then
+'                ydhmc = Rs("ydh_name")
+'                Me.Caption = "田径运动会编排与管理系统" & "  当前运动会：" & ydhmc
+'            End If
+'            Rs.MoveNext
+'        Loop
+'    Else
+'        '释放资源
+'        DBtool.ReleaseRecordset Rs
+'    End If
+    Dim txtsql As String
+    txtsql = "select * from ydh"
+    Set res = ExeSQL(txtsql)
+    If res.RecordCount > 0 Then
+        Do While Not res.EOF
+            If res("is_open") = True Then ydhmc = res("ydh_name")
+            res.MoveNext
         Loop
-    Else
-        '释放资源
-        DBtool.ReleaseRecordset rs
     End If
+    Me.Caption = "田径运动会编排与管理系统" & "  当前运动会：" & ydhmc
+
 End Sub
 
 Private Sub out_Click()
