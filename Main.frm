@@ -9,8 +9,25 @@ Begin VB.Form Main
    ScaleHeight     =   6885
    ScaleWidth      =   10770
    StartUpPosition =   3  '窗口缺省
+   Begin VB.CommandButton setup 
+      Caption         =   "设置向导"
+      Height          =   495
+      Left            =   1680
+      TabIndex        =   1
+      Top             =   3840
+      Width           =   1455
+   End
+   Begin VB.CommandButton ydh_system 
+      Caption         =   "运动会管理"
+      Height          =   375
+      Left            =   600
+      TabIndex        =   0
+      Top             =   1560
+      Width           =   1095
+   End
    Begin VB.Menu system 
-      Caption         =   "系统功能"
+      Caption         =   "管理运动会"
+      Index           =   0
       Begin VB.Menu create 
          Caption         =   "新建与打开"
       End
@@ -21,8 +38,16 @@ Begin VB.Form Main
          Caption         =   "退出"
       End
    End
-   Begin VB.Menu before 
-      Caption         =   "前期工作"
+   Begin VB.Menu config 
+      Caption         =   "竞赛规程设置"
+      Index           =   0
+      Begin VB.Menu group 
+         Caption         =   "竞赛分组及参赛队伍设置"
+      End
+   End
+   Begin VB.Menu bianpai 
+      Caption         =   "秩序册编排"
+      Index           =   0
    End
 End
 Attribute VB_Name = "Main"
@@ -31,6 +56,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
+
+
+
+Private Sub bianpai_Click(Index As Integer)
+    Form2.Show 1
+End Sub
 
 Private Sub create_Click()
     create_frm.Show 1
@@ -68,4 +99,12 @@ End Sub
 
 Private Sub out_Click()
     End
+End Sub
+
+Private Sub setup_Click()
+    config_orientation.Show 1
+End Sub
+
+Private Sub ydh_system_Click()
+    create_frm.Show 1
 End Sub
