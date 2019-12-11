@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin VB.Form Main 
    Caption         =   "田径运动会编排与管理系统"
-   ClientHeight    =   6885
+   ClientHeight    =   6825
    ClientLeft      =   225
    ClientTop       =   855
-   ClientWidth     =   10770
+   ClientWidth     =   11055
    LinkTopic       =   "Form1"
-   ScaleHeight     =   6885
-   ScaleWidth      =   10770
+   ScaleHeight     =   6825
+   ScaleWidth      =   11055
    StartUpPosition =   3  '窗口缺省
    Begin VB.CommandButton setup 
       Caption         =   "设置向导"
@@ -59,12 +59,12 @@ Option Explicit
 
 
 
-Private Sub bianpai_Click(Index As Integer)
-    Form2.Show 1
+Private Sub bianpai_Click(index As Integer)
+    Form2.show 1
 End Sub
 
 Private Sub create_Click()
-    create_frm.Show 1
+    create_frm.show 1
 End Sub
 
 Private Sub Form_Load()
@@ -97,14 +97,18 @@ Private Sub Form_Load()
 
 End Sub
 
+Private Sub group_Click()
+    group_con.show 1
+End Sub
+
 Private Sub out_Click()
     End
 End Sub
 
 Private Sub setup_Click()
-    config_orientation.Show 1
+    config_orientation.show 1
 End Sub
 
 Private Sub ydh_system_Click()
-    create_frm.Show 1
+    create_frm.show 1
 End Sub
