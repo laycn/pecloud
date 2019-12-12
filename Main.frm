@@ -42,7 +42,10 @@ Begin VB.Form Main
       Caption         =   "竞赛规程设置"
       Index           =   0
       Begin VB.Menu group 
-         Caption         =   "竞赛分组及参赛队伍设置"
+         Caption         =   "竞赛分组设置"
+      End
+      Begin VB.Menu unit 
+         Caption         =   "参赛单位设置"
       End
    End
    Begin VB.Menu bianpai 

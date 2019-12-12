@@ -22,14 +22,14 @@ Begin VB.Form group_con
    Begin VB.Frame Frame4 
       Height          =   735
       Left            =   5160
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   4080
       Width           =   3220
       Begin VB.CommandButton cancel 
          Caption         =   "取消"
          Height          =   375
          Left            =   1920
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   240
          Width           =   735
       End
@@ -46,7 +46,7 @@ Begin VB.Form group_con
          EndProperty
          Height          =   375
          Left            =   600
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   240
          Width           =   735
       End
@@ -54,7 +54,7 @@ Begin VB.Form group_con
    Begin VB.Frame Frame3 
       Height          =   2895
       Left            =   5160
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   1200
       Width           =   3220
       Begin VB.Label Label1 
@@ -70,7 +70,7 @@ Begin VB.Form group_con
          EndProperty
          Height          =   2175
          Left            =   120
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   360
          Width           =   2895
       End
@@ -78,7 +78,7 @@ Begin VB.Form group_con
    Begin VB.Frame Frame2 
       Height          =   1215
       Left            =   5160
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   0
       Width           =   3220
       Begin VB.CommandButton delall 
@@ -94,7 +94,7 @@ Begin VB.Form group_con
          EndProperty
          Height          =   375
          Left            =   1100
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   720
          Width           =   975
       End
@@ -111,7 +111,7 @@ Begin VB.Form group_con
          EndProperty
          Height          =   375
          Left            =   2130
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   720
          Width           =   975
       End
@@ -128,14 +128,14 @@ Begin VB.Form group_con
          EndProperty
          Height          =   375
          Left            =   80
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   720
          Width           =   975
       End
       Begin VB.TextBox add_group 
          Height          =   375
          Left            =   80
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   240
          Width           =   3010
       End
@@ -155,23 +155,6 @@ Begin VB.Form group_con
       TabIndex        =   0
       Top             =   0
       Width           =   5050
-      Begin VB.CommandButton Command1 
-         Caption         =   "保存"
-         BeginProperty Font 
-            Name            =   "宋体"
-            Size            =   9
-            Charset         =   134
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Left            =   2040
-         TabIndex        =   3
-         Top             =   3840
-         Width           =   855
-      End
       Begin VB.TextBox txtQty 
          BeginProperty Font 
             Name            =   "宋体"
@@ -226,6 +209,7 @@ Option Explicit
 
 Private x As New clslist
 Private Px As Single, Py As Single
+Dim Rs As ADODB.Recordset
 
 Private Sub add_Click()
     Set x.list = group_list
@@ -239,9 +223,8 @@ Private Sub add_Click()
     x.additem "", txtstr, "女子", txtstr & "女子"
 End Sub
 
-Private Sub Command1_Click()
-    MsgBox group_list.ListItems(1).SubItems(3)
-    'MsgBox group_list.ListItems(group_list.SelectedItem.index).Text
+Private Sub cancel_Click()
+    Unload Me
 End Sub
 
 Private Sub del_Click()
@@ -255,11 +238,10 @@ End Sub
 
 Private Sub delall_Click()
     group_list.ListItems.Clear
-    
-    'txtQty.Visible = False
 End Sub
 
 Private Sub Form_Load()
+    Set x = Nothing
     Set x.list = group_list
     Set x.textbox = txtQty
     
@@ -268,14 +250,15 @@ Private Sub Form_Load()
     x.addcolumn "性别", "xb", 800, False, False
     x.addcolumn "竞赛组名称", "jsmc", 1800, False, True
     
+    Set Rs = ExeSQL("select * from sign_group", ydhmc)
     
-    x.additem "", "小学组", "男子", "小学组男子"
-    x.additem "", "小学组", "女子", "小学组女子"
-    x.additem "", "中学组", "男子", "中学组男子"
-    x.additem "", "中学组", "女子", "中学组女子"
-    
-    x.Resize
-    
+    If Rs.RecordCount > 0 Then
+        Do While Not Rs.EOF
+            x.additem "", Rs("group_name"), Rs("group_sex_str"), Rs("group_type")
+            Rs.MoveNext
+        Loop
+        Rs.Close
+    End If
 End Sub
 
 Private Sub group_list_Click()
@@ -288,20 +271,49 @@ Private Sub group_list_ItemClick(ByVal Item As MSComctlLib.ListItem)
 End Sub
 
 Private Sub savecmd_Click()
+    If group_list.ListItems.Count = 0 Then
+        MsgBox "没有数据不能保存"
+        Exit Sub
+    End If
     Dim d As Object '声明字典变量
     Set d = CreateObject("Scripting.Dictionary")
-'    d.add "a", 200
-'    d.add "b", 300
-'    d.add "c", 400
-'    d.add "a", 500
-'    d("a") = 200
-'    d("a") = 500
-'    MsgBox d.Count
-    MsgBox group_list.ListItems.Count
-    Dim i As Integer
-    Dim temp_arr(1)
+    Dim i As Integer, k As Integer
+    ReDim temp_arr(4, group_list.ListItems.Count - 1)
+    k = 0   '设置初始值
     For i = 1 To group_list.ListItems.Count
-        d(group_list.ListItems(i).SubItems(1)) = group_list.ListItems(i).SubItems(1)
+        If Not d.Exists(group_list.ListItems(i).SubItems(1)) Then
+            k = k + 1
+            d(group_list.ListItems(i).SubItems(1)) = k
+        End If
+        '控件数据装配到数据
+        temp_arr(0, i - 1) = k
+        If group_list.ListItems(i).SubItems(2) = "男子" Then
+            temp_arr(1, i - 1) = 1
+        Else
+            temp_arr(1, i - 1) = 2
+        End If
+        temp_arr(2, i - 1) = group_list.ListItems(i).SubItems(1)
+        temp_arr(3, i - 1) = group_list.ListItems(i).SubItems(2)
+        temp_arr(4, i - 1) = group_list.ListItems(i).SubItems(3)
     Next i
-    MsgBox d.Count
+    
+    '数组数据存入数据库
+    If Rs.RecordCount <> 0 Then
+        Do While Not Rs.EOF
+            Rs.Delete
+            Rs.MoveNext
+        Loop
+    End If
+    For i = 1 To UBound(temp_arr, 2) + 1
+        Rs.AddNew
+        Rs("group_code") = temp_arr(0, i - 1)
+        Rs("group_sex") = temp_arr(1, i - 1)
+        Rs("group_name") = temp_arr(2, i - 1)
+        Rs("group_sex_str") = temp_arr(3, i - 1)
+        Rs("group_type") = temp_arr(4, i - 1)
+    Next i
+    Rs.Update
+    Rs.Close
+    MsgBox "保存成功"
+    Unload Me
 End Sub
