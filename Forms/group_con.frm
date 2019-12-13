@@ -189,7 +189,7 @@ Begin VB.Form group_con
          Appearance      =   1
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "宋体"
-            Size            =   10.5
+            Size            =   9
             Charset         =   134
             Weight          =   400
             Underline       =   0   'False
@@ -209,6 +209,7 @@ Option Explicit
 
 Private x As New clslist
 Private Px As Single, Py As Single
+
 Dim Rs As ADODB.Recordset
 
 Private Sub add_Click()
@@ -221,6 +222,8 @@ Private Sub add_Click()
     End If
     x.additem "", txtstr, "男子", txtstr & "男子"
     x.additem "", txtstr, "女子", txtstr & "女子"
+    add_group.Text = ""
+    add_group.SetFocus
 End Sub
 
 Private Sub cancel_Click()
@@ -232,8 +235,13 @@ Private Sub del_Click()
         MsgBox "记录为空，不能删除"
         Exit Sub
     End If
+    
     Set x.list = group_list
+    Set x.textbox = txtQty
+    x.Ismvartext
     x.removeitem group_list.SelectedItem.index
+    'group_list.Refresh
+    'group_list.ListItems(group_list.SelectedItem.index - 1).Selected = True
 End Sub
 
 Private Sub delall_Click()
@@ -250,6 +258,7 @@ Private Sub Form_Load()
     x.addcolumn "性别", "xb", 800, False, False
     x.addcolumn "竞赛组名称", "jsmc", 1800, False, True
     
+    'Dim Rs As ADODB.Recordset
     Set Rs = ExeSQL("select * from sign_group", ydhmc)
     
     If Rs.RecordCount > 0 Then
@@ -259,10 +268,12 @@ Private Sub Form_Load()
         Loop
         Rs.Close
     End If
+    x.Resize
 End Sub
 
 Private Sub group_list_Click()
     'MsgBox group_list.SelectedItem.index
+    'group_list.ListItems(group_list.SelectedItem.index).Selected = True
 End Sub
 
 Private Sub group_list_ItemClick(ByVal Item As MSComctlLib.ListItem)
@@ -298,6 +309,8 @@ Private Sub savecmd_Click()
     Next i
     
     '数组数据存入数据库
+    'Dim Rs As ADODB.Recordset
+    Set Rs = ExeSQL("select * from sign_group", ydhmc)
     If Rs.RecordCount <> 0 Then
         Do While Not Rs.EOF
             Rs.Delete
@@ -317,3 +330,4 @@ Private Sub savecmd_Click()
     MsgBox "保存成功"
     Unload Me
 End Sub
+

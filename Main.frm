@@ -3,7 +3,7 @@ Begin VB.Form Main
    Caption         =   "田径运动会编排与管理系统"
    ClientHeight    =   6825
    ClientLeft      =   225
-   ClientTop       =   855
+   ClientTop       =   870
    ClientWidth     =   11055
    LinkTopic       =   "Form1"
    ScaleHeight     =   6825
@@ -63,7 +63,7 @@ Option Explicit
 
 
 Private Sub bianpai_Click(index As Integer)
-    Form2.show 1
+    'Form2.show 1
 End Sub
 
 Private Sub create_Click()

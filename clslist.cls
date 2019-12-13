@@ -238,7 +238,7 @@ Private Sub mvartext_GotFocus()
         .SetFocus
         .SelStart = 0
         .SelLength = Len(.Text)
-        SendKeys "{HOME}+{END}", True
+        'SendKeys "{HOME}+{END}", True
     End With
     
 End Sub
@@ -276,7 +276,7 @@ Private Sub mvartext_KeyPress(KeyAscii As Integer)
                 End If
             
             Next
-                        
+            
             If active_column = 1 Then
                 edit_item.Text = mvartext
             ElseIf active_column < 1 Then
@@ -315,7 +315,7 @@ Private Sub mvartext_KeyUp(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
-Private Sub mvartext_LostFocus()
+Public Sub mvartext_LostFocus()
        
     With mvartext
         .BackColor = vbHighlight
@@ -324,3 +324,6 @@ Private Sub mvartext_LostFocus()
 
 End Sub
 
+Public Sub Ismvartext()
+    edit_active = False
+End Sub
