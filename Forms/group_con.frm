@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form group_con 
    Caption         =   "设置比赛组别"
    ClientHeight    =   4905
@@ -271,6 +271,10 @@ Private Sub Form_Load()
     x.Resize
 End Sub
 
+Private Sub Form_Unload(Cancel As Integer)
+    Set Rs = Nothing
+End Sub
+
 Private Sub group_list_Click()
     'MsgBox group_list.SelectedItem.index
     'group_list.ListItems(group_list.SelectedItem.index).Selected = True
@@ -290,14 +294,20 @@ Private Sub savecmd_Click()
     Set d = CreateObject("Scripting.Dictionary")
     Dim i As Integer, k As Integer
     ReDim temp_arr(4, group_list.ListItems.Count - 1)
-    k = 0   '设置初始值
+    k = 1   '设置初始值
     For i = 1 To group_list.ListItems.Count
+'        If Not d.Exists(group_list.ListItems(i).SubItems(1)) Then
+'            k = k + 1
+'            d(group_list.ListItems(i).SubItems(1)) = k
+'        End If
         If Not d.Exists(group_list.ListItems(i).SubItems(1)) Then
-            k = k + 1
             d(group_list.ListItems(i).SubItems(1)) = k
+            k = k + 1
+        Else
+            'd(group_list.ListItems(i).SubItems(1)) = d(group_list.ListItems(i).SubItems(1)) + 1
         End If
         '控件数据装配到数据
-        temp_arr(0, i - 1) = k
+        temp_arr(0, i - 1) = d(group_list.ListItems(i).SubItems(1))
         If group_list.ListItems(i).SubItems(2) = "男子" Then
             temp_arr(1, i - 1) = 1
         Else

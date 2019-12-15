@@ -112,6 +112,10 @@ Private Sub setup_Click()
     config_orientation.show 1
 End Sub
 
+Private Sub unit_Click()
+    sign_unit.show 1
+End Sub
+
 Private Sub ydh_system_Click()
     create_frm.show 1
 End Sub
