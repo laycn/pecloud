@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Begin VB.Form sign_unit 
    Caption         =   "报名单位设置"
    ClientHeight    =   6795
@@ -240,37 +240,59 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim Rs As ADODB.Recordset
 Dim d As Object
+Dim unit_code As Object
+Dim group_arr()
 
 Private x As New clslist
 Private Px As Single, Py As Single
 
+Private Sub add_all_Click()
+    '组织数据
+    Dim zb As String, unit_num As Integer
+    zb = Combo1(1).Text
+    unit_num = Val(Trim(Text2.Text))
+    If unit_num = 0 Then
+        MsgBox "数量不能为空"
+        Exit Sub
+    End If
+    
+    Dim i As Integer
+    For i = 1 To unit_num
+        x.additem 0, unit_code(zb) + i, zb, "新单位" & i, "新单位" & i
+    Next i
+    unit_code(zb) = unit_code(zb) + unit_num
+End Sub
+
 Private Sub add_single_Click()
     '组织数据
-    Dim jc, qc, zb, unit_code As String
+    Dim jc, qc, zb As String
     jc = Text1(0).Text
     qc = Text1(1).Text
     zb = Trim(Combo1(0).Text)
-    Dim rs1 As ADODB.Recordset
-    Dim strsql As String
-    strsql = "select id,unit_code,unit_group from sign_unit where unit_group ='" & zb & "' order by id DESC"
-    Set rs1 = ExeSQL(strsql, ydhmc)
-    If rs1.RecordCount >= 1 Then
-        rs1.MoveFirst
-        unit_code = rs1("unit_code") + 1
-    Else
-        unit_code = d(Trim(Combo1(0).Text)) * 1000 + 1
-    End If
     
+    
+    'unit_code = UnitCode(zb)
     Set Rs = ExeSQL("select * from sign_unit", ydhmc)
     Rs.AddNew
-    Rs("unit_code") = unit_code
+    Rs("unit_code") = unit_code(zb) + 1
     Rs("short_name") = jc
     Rs("unit_name") = qc
     Rs("unit_group") = zb
     Rs.Update
-    MsgBox "添加成功！"
+    Rs.Close
+    'MsgBox "添加成功！"
     
+    unit_code(zb) = unit_code(zb) + 1
+    MsgBox unit_code(zb)
     unit_refresh
+End Sub
+
+Private Sub del_cmd_Click(index As Integer)
+    If index = 1 Then
+        unit_list.ListItems.Clear
+    ElseIf index = 0 Then
+        MsgBox unit_code("小学组")
+    End If
 End Sub
 
 Private Sub Form_Load()
@@ -278,6 +300,39 @@ Private Sub Form_Load()
     '初始化控件
     Text1(0).Text = ""
     Text1(1).Text = ""
+    
+    '加载数据
+    '组别信息存入字典
+    Set d = CreateObject("Scripting.Dictionary")
+    Set unit_code = CreateObject("Scripting.Dictionary")
+    Dim rs1 As ADODB.Recordset
+    Dim txtsql As String
+    Set rs1 = ExeSQL("select id,group_code, group_name from sign_group order by id", ydhmc)
+    If rs1.RecordCount > 0 Then
+        Do While Not rs1.EOF
+            d(rs1("group_name").Value) = rs1("group_code").Value
+            rs1.MoveNext
+        Loop
+        rs1.Close
+    End If
+    
+    If d.Count > 0 Then
+        group_arr = d.Keys
+        ReDim group_code_arr(d.Count - 1)
+        Dim i As Integer
+        For i = 0 To UBound(group_arr)
+            txtsql = "select id,unit_code,unit_group from sign_unit where unit_group ='" & group_arr(i) & "' order by id DESC"
+            Set rs1 = ExeSQL(txtsql, ydhmc)
+            If rs1.RecordCount >= 1 Then
+                rs1.MoveFirst
+                unit_code(group_arr(i)) = rs1("unit_code").Value
+                rs1.Close
+            Else
+                unit_code(group_arr(i)) = d(group_arr(i)) * 1000
+            End If
+        Next i
+    End If
+    
     
     '加载listview标题
     Set x = Nothing
@@ -295,16 +350,7 @@ Private Sub Form_Load()
 
     
     '加载combo组别控件
-    Dim rs1 As ADODB.Recordset
-    Set d = CreateObject("Scripting.Dictionary")
-    Set rs1 = ExeSQL("select id,group_code, group_name from sign_group order by id", ydhmc)
-    If rs1.RecordCount > 0 Then
-        Do While Not rs1.EOF
-            d(rs1("group_name").Value) = rs1("group_code").Value
-            rs1.MoveNext
-        Loop
-        rs1.Close
-    End If
+
     Dim vkey As Variant
     For Each vkey In d
         Combo1(0).additem vkey
@@ -327,7 +373,7 @@ Sub unit_refresh()
     End If
 End Sub
 
-Private Sub Form_Unload(Cancel As Integer)
+Private Sub Form_Unload(cancel As Integer)
     Set Rs = Nothing
 End Sub
 
