@@ -263,7 +263,7 @@ Private Sub Form_Load()
     
     If Rs.RecordCount > 0 Then
         Do While Not Rs.EOF
-            x.additem "", Rs("group_name"), Rs("group_sex_str"), Rs("group_type")
+            x.additem Rs("id"), Rs("group_name"), Rs("group_sex_str"), Rs("group_type")
             Rs.MoveNext
         Loop
         Rs.Close
@@ -271,7 +271,7 @@ Private Sub Form_Load()
     x.Resize
 End Sub
 
-Private Sub Form_Unload(Cancel As Integer)
+Private Sub Form_Unload(cancel As Integer)
     Set Rs = Nothing
 End Sub
 

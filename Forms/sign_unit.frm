@@ -67,7 +67,7 @@ Begin VB.Form sign_unit
       TabIndex        =   3
       Top             =   2160
       Width           =   3135
-      Begin VB.CommandButton add_all 
+      Begin VB.CommandButton add_more 
          Caption         =   "批量增加"
          Height          =   375
          Left            =   1800
@@ -244,9 +244,9 @@ Dim unit_code As Object
 Dim group_arr()
 
 Private x As New clslist
-Private Px As Single, Py As Single
+'Private Px As Single, Py As Single
 
-Private Sub add_all_Click()
+Private Sub add_more_Click()
     '组织数据
     Dim zb As String, unit_num As Integer
     zb = Combo1(1).Text
@@ -270,8 +270,6 @@ Private Sub add_single_Click()
     qc = Text1(1).Text
     zb = Trim(Combo1(0).Text)
     
-    
-    'unit_code = UnitCode(zb)
     Set Rs = ExeSQL("select * from sign_unit", ydhmc)
     Rs.AddNew
     Rs("unit_code") = unit_code(zb) + 1
@@ -283,7 +281,6 @@ Private Sub add_single_Click()
     'MsgBox "添加成功！"
     
     unit_code(zb) = unit_code(zb) + 1
-    MsgBox unit_code(zb)
     unit_refresh
 End Sub
 
@@ -291,7 +288,24 @@ Private Sub del_cmd_Click(index As Integer)
     If index = 1 Then
         unit_list.ListItems.Clear
     ElseIf index = 0 Then
-        MsgBox unit_code("小学组")
+        If unit_list.ListItems.Count = 0 Then
+            MsgBox "记录为空，不能删除"
+            Exit Sub
+        End If
+        
+        If unit_list.SelectedItem.index = 0 Then
+            Dim txtsql As String
+            txtsql = "select * from sign_unit where id = " & Val(unit_list.ListItems(unit_list.SelectedItem.index).Text)
+            Set Rs = ExeSQL(txtsql, ydhmc)
+            Rs.Delete
+            Rs.Update
+            Rs.Close
+        End If
+    
+        Set x.list = unit_list
+        Set x.textbox = txtQty
+        x.Ismvartext
+        x.removeitem unit_list.SelectedItem.index
     End If
 End Sub
 
@@ -375,6 +389,47 @@ End Sub
 
 Private Sub Form_Unload(cancel As Integer)
     Set Rs = Nothing
+End Sub
+
+Private Sub save_ok_Click(index As Integer)
+    If index = 0 Then
+        '获取listview里全部数据
+        Dim rs2 As ADODB.Recordset
+        Set rs2 = ExeSQL("select * from sign_unit", ydhmc)
+        Dim i As Integer
+        
+        If unit_list.ListItems.Count > 0 Then
+            For i = 1 To unit_list.ListItems.Count
+                If unit_list.ListItems(i).Text > 0 Then
+                    'Rs2("short_name") = unit_list.ListItems(i).Text
+                    rs2("short_name") = unit_list.ListItems(i).SubItems(3)
+                    rs2("unit_name") = unit_list.ListItems(i).SubItems(4)
+                    rs2.Update
+                    rs2.MoveNext
+                Else
+                    rs2.AddNew
+                    rs2("unit_code") = unit_list.ListItems(i).SubItems(1)
+                    rs2("unit_group") = unit_list.ListItems(i).SubItems(2)
+                    rs2("short_name") = unit_list.ListItems(i).SubItems(3)
+                    rs2("unit_name") = unit_list.ListItems(i).SubItems(4)
+                    rs2.Update
+                    rs2.MoveNext
+                
+                End If
+            Next i
+        Else
+            Do While Not rs2.EOF
+                rs2.Delete
+                rs2.Update
+                rs2.MoveNext
+            Loop
+        End If
+        rs2.Close
+        MsgBox "保存成功！"
+    ElseIf index = 1 Then
+        Unload Me
+    End If
+    
 End Sub
 
 Private Sub unit_list_GotFocus()
