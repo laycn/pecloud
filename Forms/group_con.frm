@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form group_con 
    Caption         =   "设置比赛组别"
    ClientHeight    =   4905
@@ -210,7 +210,7 @@ Option Explicit
 Private x As New clslist
 Private Px As Single, Py As Single
 
-Dim Rs As ADODB.Recordset
+Dim rs As ADODB.Recordset
 
 Private Sub add_Click()
     Set x.list = group_list
@@ -259,20 +259,20 @@ Private Sub Form_Load()
     x.addcolumn "竞赛组名称", "jsmc", 1800, False, True
     
     'Dim Rs As ADODB.Recordset
-    Set Rs = ExeSQL("select * from sign_group", ydhmc)
+    Set rs = ExeSQL("select * from sign_group", ydhmc)
     
-    If Rs.RecordCount > 0 Then
-        Do While Not Rs.EOF
-            x.additem Rs("id"), Rs("group_name"), Rs("group_sex_str"), Rs("group_type")
-            Rs.MoveNext
+    If rs.RecordCount > 0 Then
+        Do While Not rs.EOF
+            x.additem rs("id"), rs("group_name"), rs("group_sex_str"), rs("group_type")
+            rs.MoveNext
         Loop
-        Rs.Close
+        rs.Close
     End If
     x.Resize
 End Sub
 
 Private Sub Form_Unload(cancel As Integer)
-    Set Rs = Nothing
+    Set rs = Nothing
 End Sub
 
 Private Sub group_list_Click()
@@ -290,7 +290,6 @@ Private Sub savecmd_Click()
         MsgBox "没有数据不能保存"
         Exit Sub
     End If
-    Dim d As Object '声明字典变量
     Set d = CreateObject("Scripting.Dictionary")
     Dim i As Integer, k As Integer
     ReDim temp_arr(4, group_list.ListItems.Count - 1)
@@ -320,23 +319,23 @@ Private Sub savecmd_Click()
     
     '数组数据存入数据库
     'Dim Rs As ADODB.Recordset
-    Set Rs = ExeSQL("select * from sign_group", ydhmc)
-    If Rs.RecordCount <> 0 Then
-        Do While Not Rs.EOF
-            Rs.Delete
-            Rs.MoveNext
+    Set rs = ExeSQL("select * from sign_group", ydhmc)
+    If rs.RecordCount <> 0 Then
+        Do While Not rs.EOF
+            rs.Delete
+            rs.MoveNext
         Loop
     End If
     For i = 1 To UBound(temp_arr, 2) + 1
-        Rs.AddNew
-        Rs("group_code") = temp_arr(0, i - 1)
-        Rs("group_sex") = temp_arr(1, i - 1)
-        Rs("group_name") = temp_arr(2, i - 1)
-        Rs("group_sex_str") = temp_arr(3, i - 1)
-        Rs("group_type") = temp_arr(4, i - 1)
+        rs.AddNew
+        rs("group_code") = temp_arr(0, i - 1)
+        rs("group_sex") = temp_arr(1, i - 1)
+        rs("group_name") = temp_arr(2, i - 1)
+        rs("group_sex_str") = temp_arr(3, i - 1)
+        rs("group_type") = temp_arr(4, i - 1)
     Next i
-    Rs.Update
-    Rs.Close
+    rs.Update
+    rs.Close
     MsgBox "保存成功"
     Unload Me
 End Sub

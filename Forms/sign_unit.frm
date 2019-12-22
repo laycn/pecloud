@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form sign_unit 
    Caption         =   "报名单位设置"
    ClientHeight    =   6795
@@ -238,8 +238,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-Dim Rs As ADODB.Recordset
-Dim d As Object
+Dim rs As ADODB.Recordset
+'Dim d As Object
 Dim unit_code As Object
 Dim group_arr()
 
@@ -270,14 +270,14 @@ Private Sub add_single_Click()
     qc = Text1(1).Text
     zb = Trim(Combo1(0).Text)
     
-    Set Rs = ExeSQL("select * from sign_unit", ydhmc)
-    Rs.AddNew
-    Rs("unit_code") = unit_code(zb) + 1
-    Rs("short_name") = jc
-    Rs("unit_name") = qc
-    Rs("unit_group") = zb
-    Rs.Update
-    Rs.Close
+    Set rs = ExeSQL("select * from sign_unit", ydhmc)
+    rs.AddNew
+    rs("unit_code") = unit_code(zb) + 1
+    rs("short_name") = jc
+    rs("unit_name") = qc
+    rs("unit_group") = zb
+    rs.Update
+    rs.Close
     'MsgBox "添加成功！"
     
     unit_code(zb) = unit_code(zb) + 1
@@ -293,13 +293,13 @@ Private Sub del_cmd_Click(index As Integer)
             Exit Sub
         End If
         
-        If unit_list.SelectedItem.index = 0 Then
+        If unit_list.SelectedItem.index <> 0 Then
             Dim txtsql As String
             txtsql = "select * from sign_unit where id = " & Val(unit_list.ListItems(unit_list.SelectedItem.index).Text)
-            Set Rs = ExeSQL(txtsql, ydhmc)
-            Rs.Delete
-            Rs.Update
-            Rs.Close
+            Set rs = ExeSQL(txtsql, ydhmc)
+            rs.Delete
+            rs.Update
+            rs.Close
         End If
     
         Set x.list = unit_list
@@ -317,17 +317,9 @@ Private Sub Form_Load()
     
     '加载数据
     '组别信息存入字典
-    Set d = CreateObject("Scripting.Dictionary")
-    Set unit_code = CreateObject("Scripting.Dictionary")
-    Dim rs1 As ADODB.Recordset
-    Dim txtsql As String
-    Set rs1 = ExeSQL("select id,group_code, group_name from sign_group order by id", ydhmc)
-    If rs1.RecordCount > 0 Then
-        Do While Not rs1.EOF
-            d(rs1("group_name").Value) = rs1("group_code").Value
-            rs1.MoveNext
-        Loop
-        rs1.Close
+    '判断组别字典对象是否存在
+    If d Is Nothing Then
+        group_info
     End If
     
     If d.Count > 0 Then
@@ -335,8 +327,11 @@ Private Sub Form_Load()
         ReDim group_code_arr(d.Count - 1)
         Dim i As Integer
         For i = 0 To UBound(group_arr)
+            Dim txtsql As String
+            Dim rs1 As ADODB.Recordset
             txtsql = "select id,unit_code,unit_group from sign_unit where unit_group ='" & group_arr(i) & "' order by id DESC"
             Set rs1 = ExeSQL(txtsql, ydhmc)
+            Set unit_code = CreateObject("Scripting.Dictionary")
             If rs1.RecordCount >= 1 Then
                 rs1.MoveFirst
                 unit_code(group_arr(i)) = rs1("unit_code").Value
@@ -344,6 +339,21 @@ Private Sub Form_Load()
             Else
                 unit_code(group_arr(i)) = d(group_arr(i)) * 1000
             End If
+        Next i
+        
+        '加载combo组别控件
+        Dim vkey As Variant
+        For Each vkey In d
+            Combo1(0).additem vkey
+            Combo1(1).additem vkey
+        Next
+        Combo1(0).Text = Combo1(0).list(0)
+        Combo1(1).Text = Combo1(1).list(0)
+    Else
+        For i = 0 To 1
+            Combo1(i).Enabled = False
+            Combo1(i).additem "没有数据"
+            Combo1(i).Text = Combo1(i).list(0)
         Next i
     End If
     
@@ -363,32 +373,24 @@ Private Sub Form_Load()
     unit_refresh
 
     
-    '加载combo组别控件
-
-    Dim vkey As Variant
-    For Each vkey In d
-        Combo1(0).additem vkey
-        Combo1(1).additem vkey
-    Next
-    Combo1(0).Text = Combo1(0).list(0)
-    Combo1(1).Text = Combo1(1).list(0)
+    
 End Sub
 Sub unit_refresh()
     
     unit_list.ListItems.Clear
     
-    Set Rs = ExeSQL("select * from sign_unit", ydhmc)
-    If Rs.RecordCount > 0 Then
-        Do While Not Rs.EOF
-            x.additem Rs("id"), Rs("unit_code"), Rs("unit_group"), Rs("short_name"), Rs("unit_name")
-            Rs.MoveNext
+    Set rs = ExeSQL("select * from sign_unit", ydhmc)
+    If rs.RecordCount > 0 Then
+        Do While Not rs.EOF
+            x.additem rs("id"), rs("unit_code"), rs("unit_group"), rs("short_name"), rs("unit_name")
+            rs.MoveNext
         Loop
-        Rs.Close
+        rs.Close
     End If
 End Sub
 
 Private Sub Form_Unload(cancel As Integer)
-    Set Rs = Nothing
+    Set rs = Nothing
 End Sub
 
 Private Sub save_ok_Click(index As Integer)

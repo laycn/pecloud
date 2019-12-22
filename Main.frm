@@ -3,7 +3,7 @@ Begin VB.Form Main
    Caption         =   "田径运动会编排与管理系统"
    ClientHeight    =   6825
    ClientLeft      =   225
-   ClientTop       =   870
+   ClientTop       =   855
    ClientWidth     =   11055
    LinkTopic       =   "Form1"
    ScaleHeight     =   6825
@@ -46,6 +46,9 @@ Begin VB.Form Main
       End
       Begin VB.Menu unit 
          Caption         =   "参赛单位设置"
+      End
+      Begin VB.Menu Watchxm 
+         Caption         =   "各组别参赛项目设置"
       End
    End
    Begin VB.Menu bianpai 
@@ -114,6 +117,10 @@ End Sub
 
 Private Sub unit_Click()
     sign_unit.show 1
+End Sub
+
+Private Sub Watchxm_Click()
+    xm_con.show 1
 End Sub
 
 Private Sub ydh_system_Click()
