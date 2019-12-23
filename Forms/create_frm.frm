@@ -104,6 +104,12 @@ Dim DBtool As New DBcls
 'Dim Rs As ADODB.Recordset
     
 Private Sub Form_Load()
+    '´°Ìå¾ÓÖÐ
+    With Screen
+        Me.Left = (.Width - Me.Width) / 2
+        Me.Top = (.Height - Me.Height) / 2
+    End With
+
     ydh_refresh
     'cn.Close
     'Main.out.Enabled = False
@@ -138,7 +144,7 @@ Sub ydh_refresh()
     Dim i As Integer
     res.MoveFirst
     For i = 0 To res.RecordCount - 1
-        ydh_list.AddItem res("ydh_name")
+        ydh_list.additem res("ydh_name")
         If res("is_open") = True Then
             ydh_list.Selected(i) = True
         End If

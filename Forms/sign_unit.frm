@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Begin VB.Form sign_unit 
    Caption         =   "报名单位设置"
    ClientHeight    =   6795
@@ -310,6 +310,11 @@ Private Sub del_cmd_Click(index As Integer)
 End Sub
 
 Private Sub Form_Load()
+    '窗体居中
+    With Screen
+        Me.Left = (.Width - Me.Width) / 2
+        Me.Top = (.Height - Me.Height) / 2
+    End With
     
     '初始化控件
     Text1(0).Text = ""

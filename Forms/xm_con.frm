@@ -53,7 +53,7 @@ Begin VB.Form xm_con
       TabIndex        =   16
       Top             =   5160
       Width           =   3975
-      Begin VB.CommandButton custom_xm 
+      Begin VB.CommandButton custom_xm_cmd 
          Caption         =   "自定义项目设置"
          Height          =   495
          Left            =   120
@@ -179,7 +179,7 @@ Begin VB.Form xm_con
          Height          =   2790
          Left            =   75
          TabIndex        =   5
-         Top             =   480
+         Top             =   540
          Width           =   1995
       End
       Begin VB.Label Label2 
@@ -240,6 +240,14 @@ End Sub
 
 Private Sub add_dbEvent()
     If CheckBox(zb_xm, all_xm.list(all_xm.ListIndex)) Then
+        If IsNotEmpty(zb_xm_arr) = False Then
+            ReDim zb_xm_arr(4, 0)
+            zb_xm_arr(0, 0) = dic_watch_xm(all_xm.list(all_xm.ListIndex))
+            zb_xm_arr(1, 0) = all_xm.list(all_xm.ListIndex)
+            zb_xm_arr(2, 0) = dic_group(Combo1.Text)
+            zb_xm_arr(3, 0) = Mid(dic_group(Combo1.Text), 2, 1)
+            zb_xm_arr(4, 0) = True
+        End If
         Dim flag_xm, i As Integer
         flag_xm = 0
         For i = 0 To UBound(zb_xm_arr, 2)
@@ -271,6 +279,10 @@ Private Sub add_dbEvent()
     If zb_xm.ListCount > 0 Then
         zb_xm.Selected(zb_xm.ListCount - 1) = True
     End If
+End Sub
+
+Public Sub custom_xm_cmd_Click()
+    custom_xm.show 1
 End Sub
 
 Private Sub zb_xm_DblClick()
@@ -328,6 +340,8 @@ Private Sub cmd_ok_Click()
         Next i
     End If
     rs.Close
+    MsgBox "保存成功，自动关闭进入下一项！"
+    Unload Me
 End Sub
 
 Private Sub Combo1_Click()
@@ -472,6 +486,11 @@ Private Sub update_xm_sum()
 End Sub
 
 Private Sub Form_Load()
+    '窗体居中显示
+    With Screen
+        Me.Left = (.Width - Me.Width) / 2
+        Me.Top = (.Height - Me.Height) / 2
+    End With
 
     '加载组别信息
     Set dic_group = CreateObject("Scripting.Dictionary")
@@ -520,8 +539,8 @@ Sub zb_xm_lb()
             rs.MoveNext
         Next i
         rs.Close
-    Else
-        ReDim zb_xm_arr(4, 0)
+'    Else
+'        ReDim zb_xm_arr(4, 0)
     End If
 End Sub
 
@@ -539,5 +558,3 @@ Sub xm_refresh()
         rs.Close
     End If
 End Sub
-
-

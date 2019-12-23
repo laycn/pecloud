@@ -63,7 +63,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-
+Private Declare Function AnimateWindow Lib "user32" (ByVal hwnd As Long, ByVal dwTime As Long, ByVal dwFlags As Long) As Long
 
 Private Sub bianpai_Click(index As Integer)
     'Form2.show 1
@@ -74,6 +74,12 @@ Private Sub create_Click()
 End Sub
 
 Private Sub Form_Load()
+    With Screen
+        Me.Left = (.Width - Me.Width) / 2
+        Me.Top = (.Height - Me.Height) / 2
+    End With
+    AnimateWindow hwnd, 300, &H10&
+    Me.Refresh
 '    Dim DBtool As New DBcls
 '    Dim Rs As ADODB.Recordset
 '    DBtool.SetConnToFile App.Path & "\bpdata.mdb"

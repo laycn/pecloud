@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Begin VB.Form group_con 
    Caption         =   "设置比赛组别"
    ClientHeight    =   4905
@@ -249,6 +249,12 @@ Private Sub delall_Click()
 End Sub
 
 Private Sub Form_Load()
+    '窗体居中
+    With Screen
+        Me.Left = (.Width - Me.Width) / 2
+        Me.Top = (.Height - Me.Height) / 2
+    End With
+
     Set x = Nothing
     Set x.list = group_list
     Set x.textbox = txtQty

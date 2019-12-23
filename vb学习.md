@@ -145,6 +145,8 @@ Next i
 
 
 
+
+
 ## vb 与数据库
 
 ### ADOX 新建 access 数据库
@@ -393,3 +395,23 @@ addnew使用方法后，如果要放弃添加的结果，应调用记录集的Ca
 > rs.pagecount：统计总页数
 >
 > rs.absolutepage：将数据库指针移动到当前要显示的数据记录的第一条记录。如果分5页显示，将absolutepage属性设为2，则当前记录指针移至第2页第一条记录。
+
+
+
+## 应用小技巧
+
+### 窗体居中显示
+
+#### 1.利用api
+
+~~~vb
+Private Declare Function AnimateWindow Lib "user32" (ByVal hwnd As Long, ByVal dwTime As Long, ByVal dwFlags As Long) As Long
+'窗体居中
+With Screen
+	Me.Left = (.Width - Me.Width) / 2
+	Me.Top = (.Height - Me.Height) / 2
+End With
+AnimateWindow hwnd, 300, &H10&
+Me.Refresh
+~~~
+
