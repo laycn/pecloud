@@ -56,7 +56,16 @@ Begin VB.Form custom_xm
          Width           =   2535
       End
       Begin VB.ComboBox Combo1 
-         Height          =   300
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   330
          Index           =   1
          Left            =   240
          TabIndex        =   10
@@ -65,20 +74,38 @@ Begin VB.Form custom_xm
          Width           =   2415
       End
       Begin VB.ComboBox Combo1 
-         Height          =   300
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   330
          Index           =   0
          Left            =   1200
          TabIndex        =   8
          Text            =   "Combo1"
-         Top             =   1150
+         Top             =   1120
          Width           =   1575
       End
       Begin VB.TextBox Text1 
-         Height          =   300
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   350
          Left            =   1200
          TabIndex        =   6
          Text            =   "Text1"
-         Top             =   650
+         Top             =   620
          Width           =   1575
       End
       Begin VB.Label Label3 
@@ -123,8 +150,17 @@ Begin VB.Form custom_xm
       TabIndex        =   0
       Top             =   0
       Width           =   2295
-      Begin VB.ListBox List1 
-         Height          =   4200
+      Begin VB.ListBox watch_xm_list 
+         BeginProperty Font 
+            Name            =   "宋体"
+            Size            =   10.5
+            Charset         =   134
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   4050
          Left            =   60
          TabIndex        =   1
          Top             =   600
@@ -154,4 +190,23 @@ Private Sub Form_Load()
         Me.Top = (.Height - Me.Height) / 2
     End With
     
+    '初始化文本框
+    Text1.Text = ""
+    
+    '显示项目列表
+    watch_refresh
+    
+End Sub
+
+Sub watch_refresh()
+    Dim rs As ADODB.Recordset
+    Set rs = ExeSQL("select xm_name from match_xm order by id", ydhmc)
+    
+    If rs.RecordCount > 0 Then
+        Do While Not rs.EOF
+            watch_xm_list.additem rs("xm_name")
+            rs.MoveNext
+        Loop
+        rs.Close
+    End If
 End Sub
