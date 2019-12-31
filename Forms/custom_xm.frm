@@ -56,38 +56,20 @@ Begin VB.Form custom_xm
          Width           =   2535
       End
       Begin VB.ComboBox Combo1 
-         BeginProperty Font 
-            Name            =   "宋体"
-            Size            =   10.5
-            Charset         =   134
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   330
+         Height          =   300
          Index           =   1
          Left            =   240
+         Style           =   2  'Dropdown List
          TabIndex        =   10
-         Text            =   "Combo1"
          Top             =   2040
          Width           =   2415
       End
       Begin VB.ComboBox Combo1 
-         BeginProperty Font 
-            Name            =   "宋体"
-            Size            =   10.5
-            Charset         =   134
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   330
+         Height          =   300
          Index           =   0
          Left            =   1200
+         Style           =   2  'Dropdown List
          TabIndex        =   8
-         Text            =   "Combo1"
          Top             =   1120
          Width           =   1575
       End
@@ -183,8 +165,27 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+
+Private Sub Combo1_Click(Index As Integer)
+    If Index = 0 Then
+        Combo1(1).Clear
+        If Combo1(0).Text = "径赛" Then
+            Combo1(1).additem "直道"
+            Combo1(1).additem "弯道"
+            Combo1(1).additem "长跑"
+            Combo1(1).additem "接力"
+        ElseIf Combo1(0).Text = "田赛" Then
+            Combo1(1).additem "高度"
+            Combo1(1).additem "远度"
+        ElseIf Combo1(0).Text = "计数" Then
+        
+        End If
+        Combo1(1).Text = Combo1(1).list(0)
+    End If
+End Sub
+
 Private Sub Form_Load()
-    '窗体居中
+    '窗体居中显示
     With Screen
         Me.Left = (.Width - Me.Width) / 2
         Me.Top = (.Height - Me.Height) / 2
@@ -196,6 +197,16 @@ Private Sub Form_Load()
     '显示项目列表
     watch_refresh
     
+    '加载列表信息
+    combo1_load
+    
+End Sub
+
+Sub combo1_load()
+    Combo1(0).additem "径赛"
+    Combo1(0).additem "田赛"
+    Combo1(0).additem "计数"
+    Combo1(0).Text = Combo1(0).list(0)
 End Sub
 
 Sub watch_refresh()

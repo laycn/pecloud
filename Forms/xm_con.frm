@@ -368,22 +368,13 @@ Sub zb_xm_load(data, vData)
     update_xm_sum
     
 End Sub
-Function IsNotEmpty(ByVal sArray As Variant) As Boolean '判断数组是否为空
-    Dim i As Long
-    IsNotEmpty = True
-    On Error GoTo lerr:
-    i = UBound(sArray)
-    Exit Function
-lerr:
-    IsNotEmpty = False
-End Function
 
-Private Sub Command2_Click(index As Integer)
-    If index = 0 And all_xm.ListIndex <> -1 And CheckBox(zb_xm, all_xm.list(all_xm.ListIndex)) Then
+Private Sub Command2_Click(Index As Integer)
+    If Index = 0 And all_xm.ListIndex <> -1 And CheckBox(zb_xm, all_xm.list(all_xm.ListIndex)) Then
         add_dbEvent
-    ElseIf index = 1 And all_xm.ListIndex <> -1 Then
+    ElseIf Index = 1 And all_xm.ListIndex <> -1 Then
         del_dbEvent
-    ElseIf index = 2 Then
+    ElseIf Index = 2 Then
         Dim i, j As Integer
         For j = 0 To zb_xm.ListCount
             For i = 0 To UBound(zb_xm_arr, 2)
@@ -401,21 +392,9 @@ Private Sub Command2_Click(index As Integer)
     update_xm_sum
 End Sub
 
-'检测列表里是否有重复值
-Function CheckBox(vData As Object, str As String) As Boolean
-    Dim i As Integer
-    For i = 0 To vData.ListCount - 1
-        If str = vData.list(i) Then
-            CheckBox = False '有重复不添加
-            Exit Function
-        End If
-    Next i
-    CheckBox = True '无重复可以添加
-End Function
-
-Private Sub cp_ps_Click(index As Integer)
+Private Sub cp_ps_Click(Index As Integer)
     Dim i, j As Integer
-    If index = 0 Then
+    If Index = 0 Then
         If zb_xm.ListCount > 0 Then
             ReDim cp_arr(zb_xm.ListCount - 1)
             For i = 0 To zb_xm.ListCount - 1
@@ -425,7 +404,7 @@ Private Sub cp_ps_Click(index As Integer)
         Else
             MsgBox "没有数据，不能复制"
         End If
-    ElseIf index = 1 Then
+    ElseIf Index = 1 Then
         If IsNotEmpty(cp_arr) Then
             If zb_xm.ListCount > 0 Then
                 '记录旧列别数组
