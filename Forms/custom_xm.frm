@@ -165,7 +165,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-
+Private colType As New Collection
 Private Sub Combo1_Click(Index As Integer)
     If Index = 0 Then
         Combo1(1).Clear
@@ -177,11 +177,44 @@ Private Sub Combo1_Click(Index As Integer)
         ElseIf Combo1(0).Text = "田赛" Then
             Combo1(1).additem "高度"
             Combo1(1).additem "远度"
+            Combo1(1).additem "投掷"
         ElseIf Combo1(0).Text = "计数" Then
-        
+            Combo1(1).additem "跳绳"
         End If
         Combo1(1).Text = Combo1(1).list(0)
     End If
+End Sub
+
+Private Sub Command1_Click()
+    Dim rs As ADODB.Recordset
+    Dim code_num, i As Integer
+    Dim code_type() As String
+    Dim txtsql As String
+    txtsql = "select * from match_xm where is_system = false"
+    Set rs = ExeSQL(txtsql, ydhmc)
+    
+    If rs.RecordCount = 0 Then
+        code_num = 100
+    Else
+        rs.MoveLast
+        code_num = rs("xm_code").Value + 1
+    End If
+    
+    rs.AddNew
+    rs("xm_code") = code_num
+    rs("xm_name") = Trim(Text1.Text)
+    
+    ReDim code_type(Len(colType(Combo1(1).Text)))
+    For i = 1 To Len(colType(Combo1(1).Text))
+        code_type(i) = Mid(colType(Combo1(1).Text), i, 1)
+    Next
+    rs("xm_type") = Val(code_type(1))
+    rs("xm_type_xx") = Val(code_type(2))
+    rs.Update
+    rs.Close
+    '显示项目列表
+    watch_refresh
+    MsgBox "添加成功"
 End Sub
 
 Private Sub Form_Load()
@@ -200,6 +233,9 @@ Private Sub Form_Load()
     '加载列表信息
     combo1_load
     
+    '加载项目类型代码
+    matchType
+    
 End Sub
 
 Sub combo1_load()
@@ -209,12 +245,26 @@ Sub combo1_load()
     Combo1(0).Text = Combo1(0).list(0)
 End Sub
 
+Sub matchType()
+    With colType
+    .add "11", "直道"
+    .add "12", "弯道"
+    .add "13", "长跑"
+    .add "13", "接力"
+    .add "21", "高度"
+    .add "22", "远度"
+    .add "23", "投掷"
+    .add "31", "跳绳"
+    End With
+End Sub
+
 Sub watch_refresh()
     Dim rs As ADODB.Recordset
     Set rs = ExeSQL("select xm_name from match_xm order by id", ydhmc)
     
     If rs.RecordCount > 0 Then
         Do While Not rs.EOF
+            watch_xm_list.Clear
             watch_xm_list.additem rs("xm_name")
             rs.MoveNext
         Loop
