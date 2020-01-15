@@ -3,7 +3,7 @@ Begin VB.Form Main
    Caption         =   "田径运动会编排与管理系统"
    ClientHeight    =   6825
    ClientLeft      =   225
-   ClientTop       =   855
+   ClientTop       =   870
    ClientWidth     =   11055
    Icon            =   "Main.frx":0000
    LinkTopic       =   "Form1"
@@ -42,6 +42,9 @@ Begin VB.Form Main
    Begin VB.Menu config 
       Caption         =   "竞赛规程设置"
       Index           =   0
+      Begin VB.Menu areaTime 
+         Caption         =   "竞赛参数设置"
+      End
       Begin VB.Menu group 
          Caption         =   "竞赛分组设置"
       End
@@ -66,7 +69,11 @@ Option Explicit
 
 Private Declare Function AnimateWindow Lib "user32" (ByVal hwnd As Long, ByVal dwTime As Long, ByVal dwFlags As Long) As Long
 
-Private Sub bianpai_Click(index As Integer)
+Private Sub areaTime_Click()
+    area_time.show 1
+End Sub
+
+Private Sub bianpai_Click(Index As Integer)
     'Form2.show 1
 End Sub
 
@@ -79,8 +86,8 @@ Private Sub Form_Load()
         Me.Left = (.Width - Me.Width) / 2
         Me.Top = (.Height - Me.Height) / 2
     End With
-    AnimateWindow hwnd, 300, &H10&
-    Me.Refresh
+'    AnimateWindow hwnd, 300, &H10&
+'    Me.Refresh
 '    Dim DBtool As New DBcls
 '    Dim Rs As ADODB.Recordset
 '    DBtool.SetConnToFile App.Path & "\bpdata.mdb"

@@ -18,7 +18,7 @@ Begin VB.Form custom_xm
       Top             =   4080
       Width           =   2895
       Begin VB.CommandButton Command3 
-         Caption         =   "保存退出"
+         Caption         =   "退出"
          Height          =   495
          Left            =   1440
          TabIndex        =   15
@@ -132,7 +132,7 @@ Begin VB.Form custom_xm
       TabIndex        =   0
       Top             =   0
       Width           =   2295
-      Begin VB.ListBox watch_xm_list 
+      Begin VB.ListBox match_xm_list 
          BeginProperty Font 
             Name            =   "宋体"
             Size            =   10.5
@@ -186,35 +186,62 @@ Private Sub Combo1_Click(Index As Integer)
 End Sub
 
 Private Sub Command1_Click()
-    Dim rs As ADODB.Recordset
+    'Dim rs As ADODB.Recordset
+    Dim rs1 As ADODB.Recordset
     Dim code_num, i As Integer
     Dim code_type() As String
     Dim txtsql As String
     txtsql = "select * from match_xm where is_system = false"
-    Set rs = ExeSQL(txtsql, ydhmc)
+    Set rs1 = ExeSQL(txtsql, ydhmc)
     
-    If rs.RecordCount = 0 Then
+    If rs1.RecordCount = 0 Then
         code_num = 100
     Else
-        rs.MoveLast
-        code_num = rs("xm_code").Value + 1
+        rs1.MoveLast
+        code_num = rs1("xm_code").Value + 1
     End If
-    
-    rs.AddNew
-    rs("xm_code") = code_num
-    rs("xm_name") = Trim(Text1.Text)
+    rs1.AddNew
+    rs1("xm_code") = code_num
+    rs1("xm_name") = Trim(Text1.Text)
     
     ReDim code_type(Len(colType(Combo1(1).Text)))
     For i = 1 To Len(colType(Combo1(1).Text))
         code_type(i) = Mid(colType(Combo1(1).Text), i, 1)
     Next
-    rs("xm_type") = Val(code_type(1))
-    rs("xm_type_xx") = Val(code_type(2))
-    rs.Update
-    rs.Close
-    '显示项目列表
-    watch_refresh
+    rs1("xm_type") = Val(code_type(1))
+    rs1("xm_type_xx") = Val(code_type(2))
+    rs1.Update
+    rs1.Close
     MsgBox "添加成功"
+    Text1.Text = ""
+    Text1.SetFocus
+    '显示项目列表
+    match_refresh
+    
+End Sub
+
+Private Sub Command2_Click()
+    If match_xm_list.ListIndex <> -1 Then
+        'MsgBox match_xm_list.list(match_xm_list.ListIndex)
+        Dim rs As ADODB.Recordset
+        Dim txtsql As String
+        txtsql = "select xm_name from match_xm where xm_name = '" & _
+            match_xm_list.list(match_xm_list.ListIndex) & "' and is_system = false"
+        Set rs = ExeSQL(txtsql, ydhmc)
+        If rs.RecordCount > 0 Then
+            rs.Delete
+            rs.Update
+            rs.Close
+            match_xm_list.removeitem match_xm_list.ListIndex
+            MsgBox "删除成功"
+        Else
+            MsgBox "内置项目，不允许删除"
+        End If
+    End If
+End Sub
+
+Private Sub Command3_Click()
+    Unload Me
 End Sub
 
 Private Sub Form_Load()
@@ -228,13 +255,13 @@ Private Sub Form_Load()
     Text1.Text = ""
     
     '显示项目列表
-    watch_refresh
+    match_refresh
     
     '加载列表信息
     combo1_load
     
     '加载项目类型代码
-    matchType
+    If colType.Count = 0 Then matchType
     
 End Sub
 
@@ -258,16 +285,22 @@ Sub matchType()
     End With
 End Sub
 
-Sub watch_refresh()
+Sub match_refresh()
+    match_xm_list.Clear
     Dim rs As ADODB.Recordset
     Set rs = ExeSQL("select xm_name from match_xm order by id", ydhmc)
-    
     If rs.RecordCount > 0 Then
+        
         Do While Not rs.EOF
-            watch_xm_list.Clear
-            watch_xm_list.additem rs("xm_name")
+            match_xm_list.additem rs("xm_name")
             rs.MoveNext
         Loop
         rs.Close
     End If
 End Sub
+
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    '加载项目总表
+    xm_con.xm_refresh
+End Sub
+

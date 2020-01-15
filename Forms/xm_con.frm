@@ -53,18 +53,26 @@ Begin VB.Form xm_con
       TabIndex        =   16
       Top             =   5160
       Width           =   3975
+      Begin VB.CommandButton Command1 
+         Caption         =   "取消"
+         Height          =   495
+         Left            =   3240
+         TabIndex        =   22
+         Top             =   160
+         Width           =   615
+      End
       Begin VB.CommandButton custom_xm_cmd 
          Caption         =   "自定义项目设置"
          Height          =   495
          Left            =   120
          TabIndex        =   18
          Top             =   160
-         Width           =   2055
+         Width           =   1695
       End
       Begin VB.CommandButton cmd_ok 
-         Caption         =   "确定"
+         Caption         =   "保存退出"
          Height          =   495
-         Left            =   2880
+         Left            =   2100
          TabIndex        =   17
          Top             =   160
          Width           =   975
@@ -279,6 +287,10 @@ Private Sub add_dbEvent()
     If zb_xm.ListCount > 0 Then
         zb_xm.Selected(zb_xm.ListCount - 1) = True
     End If
+End Sub
+
+Private Sub Command1_Click()
+    Unload Me
 End Sub
 
 Public Sub custom_xm_cmd_Click()
